@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeVerse · Quiz Instructions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: #0a0015;
+            color: #fff;
+            overflow-x: hidden;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ===== BACKGROUND ORBS ===== */
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            background: #9d4edd;
+            border-radius: 50%;
+            filter: blur(200px);
+            top: -300px;
+            left: -300px;
+            opacity: 0.15;
+            z-index: 0;
+            animation: orbPulse 7s ease-in-out infinite alternate;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: #00f0ff;
+            border-radius: 50%;
+            filter: blur(200px);
+            bottom: -250px;
+            right: -250px;
+            opacity: 0.12;
+            z-index: 0;
+            animation: orbPulse 9s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes orbPulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.12;
+            }
+            100% {
+                transform: scale(1.3);
+                opacity: 0.25;
+            }
+        }
+
+        /* ===== FLOATING PARTICLES ===== */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .bg-particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.7;
+            }
+            85% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* ===== MATRIX RAIN CANVAS ===== */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.08;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            z-index: 10;
+            position: relative;
+            animation: fadeUp 1s ease-out;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 38px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #00f0ff;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.5), 0 0 60px rgba(157, 78, 221, 0.3);
+            animation: logoGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            0% {
+                text-shadow: 0 0 20px rgba(0, 240, 255, 0.4), 0 0 60px rgba(157, 78, 221, 0.2);
+            }
+            100% {
+                text-shadow: 0 0 40px rgba(0, 240, 255, 0.8), 0 0 80px rgba(157, 78, 221, 0.5), 0 0 120px rgba(0, 240, 255, 0.2);
+            }
+        }
+
+        .header .logo span {
+            color: #9d4edd;
+        }
+
+        .header .subtitle {
+            color: #9d4edd;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-top: 6px;
+            font-weight: 600;
+            text-shadow: 0 0 15px rgba(157, 78, 221, 0.5);
+        }
+
+        .header .divider {
+            width: 120px;
+            height: 3px;
+            margin: 16px auto 0;
+            background: linear-gradient(90deg, transparent, #9d4edd, #00f0ff, transparent);
+            border-radius: 4px;
+            animation: dividerPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dividerPulse {
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: scaleX(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scaleX(1);
+            }
+        }
+
+        /* ===== INSTRUCTION CARD ===== */
+        .instruction-card {
+            background: linear-gradient(145deg, rgba(20, 10, 40, 0.85), rgba(30, 15, 50, 0.85));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(157, 78, 221, 0.3);
+            border-radius: 16px;
+            padding: 40px 45px;
+            margin-bottom: 40px;
+            box-shadow: 0 0 60px rgba(157, 78, 221, 0.15), inset 0 0 40px rgba(157, 78, 221, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .instruction-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 50%, rgba(0, 240, 255, 0.03), transparent 60%);
+            pointer-events: none;
+            animation: cardShimmer 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes cardShimmer {
+            0% {
+                transform: translateX(-20%) rotate(0deg);
+            }
+            100% {
+                transform: translateX(20%) rotate(3deg);
+            }
+        }
+
+        .instruction-card .card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .instruction-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #00f0ff;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .instruction-title .icon {
+            font-size: 32px;
+        }
+
+        .instruction-sub {
+            color: rgba(157, 78, 221, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(157, 78, 221, 0.15);
+        }
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 30px;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 16px;
+            background: rgba(157, 78, 221, 0.04);
+            border-radius: 10px;
+            border-left: 3px solid rgba(157, 78, 221, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .rule-item:hover {
+            background: rgba(157, 78, 221, 0.1);
+            border-left-color: #00f0ff;
+            transform: translateX(4px);
+        }
+
+        .rule-item .rule-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .rule-item .rule-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.5;
+        }
+
+        .rule-item .rule-text strong {
+            color: #00f0ff;
+            font-weight: 700;
+        }
+
+        .rule-item .rule-text .highlight-green {
+            color: #34d399;
+            font-weight: 700;
+        }
+
+        .rule-item .rule-text .highlight-red {
+            color: #ff6b6b;
+            font-weight: 700;
+        }
+
+        .rule-item .rule-text .highlight-purple {
+            color: #9d4edd;
+            font-weight: 700;
+        }
+
+        /* ===== PHASE CARDS ===== */
+        .phases-section {
+            margin-bottom: 40px;
+        }
+
+        .phases-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 24px;
+            letter-spacing: 2px;
+        }
+
+        .phases-title span {
+            color: #00f0ff;
+        }
+
+        .phases-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .phase-card {
+            position: relative;
+            background: linear-gradient(145deg, rgba(20, 10, 40, 0.8), rgba(30, 15, 50, 0.8));
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(157, 78, 221, 0.25);
+            border-radius: 16px;
+            padding: 28px 24px 30px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: default;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .phase-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 16px;
+            padding: 2px;
+            background: linear-gradient(135deg, transparent 40%, rgba(157, 78, 221, 0.2), transparent 60%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+
+        .phase-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.03), transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Hover states - highlight on cursor move */
+        .phase-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: #00f0ff;
+            box-shadow: 0 20px 60px rgba(0, 240, 255, 0.2), 0 0 80px rgba(157, 78, 221, 0.15);
+        }
+
+        .phase-card:hover::after {
+            opacity: 1;
+        }
+
+        .phase-card:hover .phase-glow {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .phase-card .phase-glow {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.6s ease;
+        }
+
+        .phase-card.easy .phase-glow {
+            background: radial-gradient(ellipse at center, rgba(52, 211, 153, 0.15), transparent 60%);
+        }
+
+        .phase-card.medium .phase-glow {
+            background: radial-gradient(ellipse at center, rgba(251, 191, 36, 0.15), transparent 60%);
+        }
+
+        .phase-card.hard .phase-glow {
+            background: radial-gradient(ellipse at center, rgba(255, 107, 107, 0.15), transparent 60%);
+        }
+
+        .phase-card .phase-number {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(157, 78, 221, 0.6);
+            margin-bottom: 6px;
+        }
+
+        /* New sequence labels */
+        .phase-card .phase-order {
+            font-size: 14px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 2px;
+            margin-bottom: 2px;
+        }
+
+        .phase-card .phase-name {
+            font-size: 26px;
+            font-weight: 900;
+            margin-bottom: 4px;
+            letter-spacing: 2px;
+        }
+
+        .phase-card.easy .phase-name {
+            color: #34d399;
+            text-shadow: 0 0 30px rgba(52, 211, 153, 0.3);
+        }
+
+        .phase-card.medium .phase-name {
+            color: #fbbf24;
+            text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+        }
+
+        .phase-card.hard .phase-name {
+            color: #ff6b6b;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+        }
+
+        .phase-card .phase-icon {
+            font-size: 40px;
+            margin: 8px 0 12px;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .phase-card:hover .phase-icon {
+            transform: scale(1.2) rotate(-5deg);
+        }
+
+        .phase-card .phase-details {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .phase-card .phase-details strong {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 700;
+        }
+
+        .phase-card .phase-badge {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 4px 18px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .phase-card.easy .phase-badge {
+            background: rgba(52, 211, 153, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+
+        .phase-card.medium .phase-badge {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .phase-card.hard .phase-badge {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        /* Hover glow lines - animated border on hover */
+        .phase-card .border-glow {
+            position: absolute;
+            inset: -2px;
+            border-radius: 16px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .phase-card:hover .border-glow {
+            opacity: 1;
+        }
+
+        .phase-card.easy .border-glow {
+            box-shadow: 0 0 30px rgba(52, 211, 153, 0.2), inset 0 0 30px rgba(52, 211, 153, 0.05);
+        }
+
+        .phase-card.medium .border-glow {
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.2), inset 0 0 30px rgba(251, 191, 36, 0.05);
+        }
+
+        .phase-card.hard .border-glow {
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.2), inset 0 0 30px rgba(255, 107, 107, 0.05);
+        }
+
+        /* Phase card progress dots */
+        .phase-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 14px;
+        }
+
+        .phase-dots .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(157, 78, 221, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .phase-card:hover .phase-dots .dot {
+            background: rgba(157, 78, 221, 0.5);
+        }
+
+        .phase-card.easy:hover .phase-dots .dot {
+            background: #34d399;
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.4);
+        }
+
+        .phase-card.medium:hover .phase-dots .dot {
+            background: #fbbf24;
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+        }
+
+        .phase-card.hard:hover .phase-dots .dot {
+            background: #ff6b6b;
+            box-shadow: 0 0 12px rgba(255, 107, 107, 0.4);
+        }
+
+        .phase-dots .dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .phase-dots .dot:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+        .phase-dots .dot:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        .phase-dots .dot:nth-child(4) {
+            animation-delay: 0.45s;
+        }
+        .phase-dots .dot:nth-child(5) {
+            animation-delay: 0.6s;
+        }
+
+        .phase-card:hover .phase-dots .dot {
+            animation: dotPulse 0.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes dotPulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+        }
+
+        /* ===== START BUTTON ===== */
+        .start-section {
+            text-align: center;
+        }
+
+        .start-btn {
+            position: relative;
+            padding: 20px 70px;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #9d4edd, #00f0ff);
+            color: #0a0015;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(157, 78, 221, 0.3), 0 0 80px rgba(0, 240, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.6s ease;
+            pointer-events: none;
+        }
+
+        .start-btn:hover::before {
+            left: 100%;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 60px rgba(157, 78, 221, 0.5), 0 0 100px rgba(0, 240, 255, 0.3);
+        }
+
+        .start-btn:active {
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        .start-btn .btn-icon {
+            display: inline-block;
+            margin-right: 12px;
+            animation: btnIconFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes btnIconFloat {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        .start-btn .ripple-effect {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleAnim 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(15);
+                opacity: 0;
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 820px) {
+            .rules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .phases-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .phases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .instruction-card {
+                padding: 28px 20px;
+            }
+
+            .header .logo {
+                font-size: 28px;
+                letter-spacing: 2px;
+            }
+
+            .instruction-title {
+                font-size: 22px;
+                flex-wrap: wrap;
+            }
+
+            .rule-item {
+                padding: 10px 12px;
+            }
+
+            .start-btn {
+                padding: 16px 40px;
+                font-size: 15px;
+                letter-spacing: 2px;
+            }
+
+            .phase-card {
+                padding: 20px 16px 24px;
+            }
+
+            .phase-card .phase-name {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 10px;
+            }
+
+            .instruction-card {
+                padding: 20px 14px;
+            }
+
+            .header .logo {
+                font-size: 22px;
+            }
+
+            .rule-item .rule-text {
+                font-size: 13px;
+            }
+
+            .phase-card .phase-name {
+                font-size: 19px;
+            }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0015;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #9d4edd, #00f0ff);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f0ff;
+        }
+
+        /* ===== GLITCH TEXT ANIMATION ===== */
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .glitch-text:hover::before {
+            animation: glitch1 0.3s ease-in-out 2;
+            color: #9d4edd;
+            opacity: 0.7;
+        }
+
+        .glitch-text:hover::after {
+            animation: glitch2 0.3s ease-in-out 2;
+            color: #00f0ff;
+            opacity: 0.7;
+        }
+
+        @keyframes glitch1 {
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-3px, 2px);
+            }
+            40% {
+                transform: translate(3px, -1px);
+            }
+            60% {
+                transform: translate(-2px, 3px);
+            }
+            80% {
+                transform: translate(2px, -2px);
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        @keyframes glitch2 {
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(3px, -2px);
+            }
+            40% {
+                transform: translate(-3px, 1px);
+            }
+            60% {
+                transform: translate(2px, -3px);
+            }
+            80% {
+                transform: translate(-2px, 2px);
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        /* ===== LOADING OVERLAY ===== */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: #0a0015;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loading-overlay.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-overlay .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(157, 78, 221, 0.2);
+            border-top: 4px solid #00f0ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+            margin-bottom: 24px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-overlay .load-text {
+            color: #00f0ff;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            animation: textPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes textPulse {
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* ===== TOOLTIP / HINT BADGE ===== */
+        .hint-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(157, 78, 221, 0.12);
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            border-radius: 20px;
+            padding: 4px 14px 4px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #9d4edd;
+            margin-top: 6px;
+        }
+
+        .hint-badge .hint-icon {
+            font-size: 14px;
+        }
+
+        /* Arrow indicator between phases */
+        .phase-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: rgba(157, 78, 221, 0.3);
+            padding: 0 4px;
+            user-select: none;
+        }
+
+        @media (max-width: 820px) {
+            .phase-arrow {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOADING OVERLAY ===== -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="load-text">Loading CodeVerse</div>
+    </div>
+
+    <!-- ===== MATRIX RAIN CANVAS ===== -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <!-- ===== FLOATING PARTICLES ===== -->
+    <div class="bg-particles" id="bgParticles"></div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="container" id="mainContent">
+
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <div class="logo">
+                <span>⌨️</span> Code<span>Verse</span>
+            </div>
+            <div class="subtitle">⚡ Computer Science Quiz ⚡</div>
+            <div class="divider"></div>
+        </div>
+
+        <!-- ===== INSTRUCTION CARD ===== -->
+        <div class="instruction-card">
+            <div class="card-content">
+                <div class="instruction-title">
+                    <span class="icon">📋</span>
+                    <span class="glitch-text" data-text="Quiz Instructions">Quiz Instructions</span>
+                </div>
+                <div class="instruction-sub">
+                    Read the rules carefully before you begin your CodeVerse journey
+                </div>
+
+                <div class="rules-grid">
+                    <div class="rule-item">
+                        <span class="rule-icon">🔄</span>
+                        <div class="rule-text">
+                            <strong>Attempts:</strong> Quiz can be attempted <strong>repeatedly</strong> — practice until you master it!
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-icon">📊</span>
+                        <div class="rule-text">
+                            <strong>Scoring:</strong> Right answer → <span class="highlight-green">+4 marks</span> &nbsp;|&nbsp; Wrong answer → <span class="highlight-red">-1 mark</span>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-icon">💡</span>
+                        <div class="rule-text">
+                            <strong>Hint System:</strong> Each question comes with a <span class="highlight-purple">hint</span> to guide you
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-icon">📌</span>
+                        <div class="rule-text">
+                            <strong>Mandatory Attempt:</strong> All questions in each phase <strong>must be attempted</strong> — no skipping!
+                        </div>
+                    </div>
+                    <div class="rule-item" style="grid-column: 1 / -1; border-left-color: #00f0ff;">
+                        <span class="rule-icon">🏆</span>
+                        <div class="rule-text">
+                            <strong>Fixed Progression:</strong> <span class="highlight-green">1st → Easy</span> (5 Qs) &nbsp;·&nbsp;
+                            <span class="highlight-purple">2nd → Medium</span> (5 Qs) &nbsp;·&nbsp;
+                            <span class="highlight-red">3rd → Hard</span> (5 Qs) — <strong>15 questions total</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 18px; display: flex; justify-content: center;">
+                    <div class="hint-badge">
+                        <span class="hint-icon">💡</span>
+                        Hints available on every question — use them wisely!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PHASE CARDS (Fixed Order) ===== -->
+        <div class="phases-section">
+            <div class="phases-title">
+                Quiz <span>Progression</span> (Fixed Order) 🚀
+            </div>
+
+            <div class="phases-grid">
+                <!-- 1st: EASY -->
+                <div class="phase-card easy">
+                    <div class="phase-glow"></div>
+                    <div class="border-glow"></div>
+                    <div class="phase-order">1st Phase</div>
+                    <div class="phase-name">🟢 Easy</div>
+                    <span class="phase-icon">🌱</span>
+                    <div class="phase-details">
+                        <strong>5</strong> questions · <strong>+4</strong> / <strong>-1</strong> marks
+                    </div>
+                    <div class="phase-badge">Beginner Friendly</div>
+                    <div class="phase-dots">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+
+                <!-- 2nd: MEDIUM -->
+                <div class="phase-card medium">
+                    <div class="phase-glow"></div>
+                    <div class="border-glow"></div>
+                    <div class="phase-order">2nd Phase</div>
+                    <div class="phase-name">🟡 Medium</div>
+                    <span class="phase-icon">⚡</span>
+                    <div class="phase-details">
+                        <strong>5</strong> questions · <strong>+4</strong> / <strong>-1</strong> marks
+                    </div>
+                    <div class="phase-badge">Intermediate</div>
+                    <div class="phase-dots">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+
+                <!-- 3rd: HARD -->
+                <div class="phase-card hard">
+                    <div class="phase-glow"></div>
+                    <div class="border-glow"></div>
+                    <div class="phase-order">3rd Phase</div>
+                    <div class="phase-name">🔴 Hard</div>
+                    <span class="phase-icon">🔥</span>
+                    <div class="phase-details">
+                        <strong>5</strong> questions · <strong>+4</strong> / <strong>-1</strong> marks
+                    </div>
+                    <div class="phase-badge">Expert Level</div>
+                    <div class="phase-dots">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== START BUTTON ===== -->
+        <div class="start-section">
+            <button class="start-btn" id="startBtn">
+                <span class="btn-icon">🚀</span>
+                Start Your Journey
+                <span class="btn-icon" style="margin-left:12px; margin-right:0;">💻</span>
+            </button>
+            <p style="margin-top: 16px; font-size: 12px; color: rgba(157,78,221,0.4); letter-spacing: 1px;">
+                Proceed in fixed order: 1st Easy → 2nd Medium → 3rd Hard
+            </p>
+        </div>
+
+    </div>
+
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ===== LOADING =====
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            setTimeout(function() {
+                loadingOverlay.classList.add('hide');
+            }, 1200);
+
+            // ===== MATRIX RAIN =====
+            const canvas = document.getElementById('matrixCanvas');
+            const ctx = canvas.getContext('2d');
+            let matrixWidth, matrixHeight;
+
+            function resizeMatrix() {
+                matrixWidth = canvas.width = window.innerWidth;
+                matrixHeight = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeMatrix);
+            resizeMatrix();
+
+            const matrixChars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789';
+            const fontSize = 14;
+            let columns = Math.floor(matrixWidth / fontSize);
+            let drops = [];
+
+            function initDrops() {
+                drops = [];
+                for (let i = 0; i < columns; i++) {
+                    drops[i] = Math.random() * -100;
+                }
+            }
+            initDrops();
+
+            function drawMatrix() {
+                ctx.fillStyle = 'rgba(10, 0, 21, 0.05)';
+                ctx.fillRect(0, 0, matrixWidth, matrixHeight);
+
+                ctx.fillStyle = '#00f0ff';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                    const x = i * fontSize;
+                    const y = drops[i] * fontSize;
+
+                    const opacity = Math.random() * 0.4 + 0.1;
+                    ctx.fillStyle = `rgba(0, 240, 255, ${opacity})`;
+                    ctx.fillText(char, x, y);
+
+                    if (y > matrixHeight && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            let matrixInterval = setInterval(drawMatrix, 60);
+
+            // ===== FLOATING PARTICLES =====
+            const particleContainer = document.getElementById('bgParticles');
+            const colors = ['#9d4edd', '#00f0ff', '#7a4aaa', '#3af0ff', '#c084fc'];
+
+            for (let i = 0; i < 50; i++) {
+                const p = document.createElement('div');
+                p.className = 'bg-particle';
+                const size = Math.random() * 5 + 2;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.animationDuration = (Math.random() * 16 + 10) + 's';
+                p.style.animationDelay = (Math.random() * 14) + 's';
+                p.style.boxShadow = '0 0 14px ' + p.style.background;
+                particleContainer.appendChild(p);
+            }
+
+            // ===== START BUTTON RIPPLE & LOGIC =====
+            const startBtn = document.getElementById('startBtn');
+
+            startBtn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple-effect';
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                ripple.style.left = (x - 10) + 'px';
+                ripple.style.top = (y - 10) + 'px';
+                this.appendChild(ripple);
+                setTimeout(function() { ripple.remove(); }, 700);
+
+                // Simulate quiz start
+                const btnText = this.innerHTML;
+                this.innerHTML = '⏳ Loading Quiz...';
+                this.style.pointerEvents = 'none';
+                this.style.opacity = '0.7';
+
+                setTimeout(function() {
+                    alert(
+                        '🎯 QUIZ STARTED! 🎯\n\n' +
+                        '📌 The quiz will proceed in this fixed order:\n' +
+                        '   1st Phase → EASY (5 Questions)\n' +
+                        '   2nd Phase → MEDIUM (5 Questions)\n' +
+                        '   3rd Phase → HARD (5 Questions)\n\n' +
+                        '💡 Hints available on each question\n' +
+                        '✅ +4 for right | ❌ -1 for wrong\n\n' +
+                        'Good luck, coder! 💻⚡'
+                    );
+                    startBtn.innerHTML = btnText;
+                    startBtn.style.pointerEvents = 'auto';
+                    startBtn.style.opacity = '1';
+                }, 1200);
+            });
+
+            // ===== CLEANUP ON UNLOAD =====
+            window.addEventListener('beforeunload', function() {
+                clearInterval(matrixInterval);
+            });
+
+            // ===== RESIZE HANDLER FOR MATRIX =====
+            window.addEventListener('resize', function() {
+                resizeMatrix();
+                columns = Math.floor(matrixWidth / fontSize);
+                if (drops.length < columns) {
+                    for (let i = drops.length; i < columns; i++) {
+                        drops[i] = Math.random() * -100;
+                    }
+                }
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
