@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeVerse · Quiz Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: #0a0015;
+            color: #fff;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            background: #9d4edd;
+            border-radius: 50%;
+            filter: blur(200px);
+            top: -300px;
+            left: -300px;
+            opacity: 0.10;
+            z-index: 0;
+            animation: orbPulse 7s ease-in-out infinite alternate;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: #00f0ff;
+            border-radius: 50%;
+            filter: blur(200px);
+            bottom: -250px;
+            right: -250px;
+            opacity: 0.08;
+            z-index: 0;
+            animation: orbPulse 9s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes orbPulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.08;
+            }
+            100% {
+                transform: scale(1.3);
+                opacity: 0.18;
+            }
+        }
+
+        /* ===== LOADING OVERLAY ===== */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: #0a0015;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loading-overlay.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-overlay .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(157, 78, 221, 0.2);
+            border-top: 4px solid #00f0ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+            margin-bottom: 24px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-overlay .load-text {
+            color: #00f0ff;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            animation: textPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes textPulse {
+            0%, 100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .bg-particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+            opacity: 0;
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.6;
+            }
+            85% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: 0.2;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.8);
+            }
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            animation: fadeUp 0.8s ease-out;
+            padding-top: 20px;
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(157, 78, 221, 0.12);
+        }
+        .header .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #00f0ff;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3), 0 0 60px rgba(157, 78, 221, 0.15);
+        }
+        .header .logo span {
+            color: #9d4edd;
+        }
+        .header .subtitle {
+            color: rgba(157, 78, 221, 0.5);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        .subject-badge {
+            display: inline-block;
+            background: rgba(255, 107, 107, 0.12);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+            padding: 4px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #ff6b6b;
+            margin-bottom: 8px;
+        }
+
+        .back-to-dash {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(157, 78, 221, 0.5);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            padding: 6px 16px;
+            border-radius: 30px;
+            border: 1px solid rgba(157, 78, 221, 0.1);
+            background: rgba(157, 78, 221, 0.05);
+        }
+        .back-to-dash:hover {
+            color: #9d4edd;
+            border-color: rgba(157, 78, 221, 0.3);
+            background: rgba(157, 78, 221, 0.1);
+            transform: translateX(-3px);
+        }
+
+        .user-badge-top {
+            font-size: 13px;
+            color: #00f0ff;
+            background: rgba(0, 240, 255, 0.06);
+            padding: 4px 16px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* ===== RESULTS SUMMARY ===== */
+        .results-summary {
+            background: linear-gradient(145deg, rgba(20, 10, 40, 0.92), rgba(30, 15, 50, 0.92));
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(157, 78, 221, 0.15);
+            border-radius: 16px;
+            padding: 28px 30px 30px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .results-summary .result-icon {
+            font-size: 56px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .results-summary .result-title {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+        .results-summary .result-title.pass {
+            color: #34d399;
+            text-shadow: 0 0 30px rgba(52, 211, 153, 0.2);
+        }
+        .results-summary .result-title.fail {
+            color: #ff6b6b;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.2);
+        }
+        .results-summary .result-sub {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+        .result-stats .stat-item {
+            background: rgba(157, 78, 221, 0.04);
+            border: 1px solid rgba(157, 78, 221, 0.06);
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+        }
+        .result-stats .stat-item .stat-number {
+            font-size: 28px;
+            font-weight: 900;
+            display: block;
+        }
+        .result-stats .stat-item .stat-number.green {
+            color: #34d399;
+        }
+        .result-stats .stat-item .stat-number.red {
+            color: #ff6b6b;
+        }
+        .result-stats .stat-item .stat-number.gold {
+            color: #fbbf24;
+        }
+        .result-stats .stat-item .stat-number.cyan {
+            color: #00f0ff;
+        }
+        .result-stats .stat-item .stat-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .result-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(157, 78, 221, 0.2), transparent);
+            margin: 18px 0;
+        }
+
+        .result-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        .result-actions .nav-btn {
+            margin: 0;
+            padding: 12px 32px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .result-actions .nav-btn.retry-btn {
+            background: linear-gradient(135deg, #9d4edd, #00f0ff);
+            color: #0a0015;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 30px rgba(157, 78, 221, 0.15);
+        }
+        .result-actions .nav-btn.retry-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 50px rgba(157, 78, 221, 0.25);
+        }
+        .result-actions .nav-btn.done-btn {
+            background: rgba(157, 78, 221, 0.15);
+            color: #9d4edd;
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            box-shadow: none;
+        }
+        .result-actions .nav-btn.done-btn:hover {
+            background: rgba(157, 78, 221, 0.25);
+            border-color: rgba(157, 78, 221, 0.4);
+            transform: translateY(-4px);
+        }
+
+        /* ===== QUESTION REVIEW ===== */
+        .review-section {
+            background: linear-gradient(145deg, rgba(20, 10, 40, 0.92), rgba(30, 15, 50, 0.92));
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(157, 78, 221, 0.12);
+            border-radius: 16px;
+            padding: 22px 26px 26px;
+            margin-bottom: 24px;
+        }
+        .review-section .review-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00f0ff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .review-section .review-title span {
+            color: #9d4edd;
+        }
+
+        .review-item {
+            background: rgba(20, 10, 40, 0.4);
+            border: 1px solid rgba(157, 78, 221, 0.06);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        .review-item.correct {
+            border-left: 4px solid #34d399;
+            background: rgba(52, 211, 153, 0.04);
+        }
+        .review-item.wrong {
+            border-left: 4px solid #ff6b6b;
+            background: rgba(255, 107, 107, 0.04);
+        }
+        .review-item .ri-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+        .review-item .ri-qnum {
+            font-size: 13px;
+            font-weight: 700;
+            color: #9d4edd;
+        }
+        .review-item .ri-status {
+            font-size: 18px;
+        }
+        .review-item .ri-question {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+        .review-item .ri-question code {
+            background: rgba(157, 78, 221, 0.06);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #00f0ff;
+            font-family: 'Courier New', monospace;
+        }
+        .review-item .ri-answers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 18px;
+            font-size: 13px;
+        }
+        .review-item .ri-answers .ri-answer {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .review-item .ri-answers .ri-answer .ri-label {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .review-item .ri-answers .ri-answer .ri-text {
+            font-weight: 500;
+        }
+        .review-item .ri-answers .ri-answer .ri-text.user-wrong {
+            color: #ff6b6b;
+            text-decoration: line-through;
+        }
+        .review-item .ri-answers .ri-answer .ri-text.user-correct {
+            color: #34d399;
+        }
+        .review-item .ri-answers .ri-answer .ri-text.correct-answer {
+            color: #34d399;
+            font-weight: 600;
+        }
+        .review-item .ri-answers .ri-answer .ri-text.not-answered {
+            color: rgba(255, 255, 255, 0.2);
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.15);
+        }
+        .empty-state .empty-icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .empty-state .empty-text {
+            font-size: 16px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0015;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #9d4edd, #00f0ff);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f0ff;
+        }
+
+        @media (max-width: 640px) {
+            .result-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            .results-summary {
+                padding: 20px 16px 22px;
+            }
+            .results-summary .result-title {
+                font-size: 22px;
+            }
+            .result-stats .stat-item .stat-number {
+                font-size: 22px;
+            }
+            .review-section {
+                padding: 16px 14px 18px;
+            }
+            .review-item {
+                padding: 12px 14px;
+            }
+            .result-actions .nav-btn {
+                padding: 10px 20px;
+                font-size: 12px;
+            }
+            .top-nav {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .back-to-dash {
+                align-self: center;
+            }
+            .user-badge-top {
+                align-self: center;
+            }
+            .header .logo {
+                font-size: 22px;
+            }
+        }
+        @media (max-width: 420px) {
+            .result-stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .result-stats .stat-item {
+                padding: 8px 4px;
+            }
+            .result-stats .stat-item .stat-number {
+                font-size: 18px;
+            }
+            .result-actions .nav-btn {
+                flex: 1;
+                justify-content: center;
+                padding: 10px 14px;
+                font-size: 11px;
+            }
+            .header .logo {
+                font-size: 18px;
+                letter-spacing: 1px;
+            }
+            .review-item .ri-answers {
+                flex-direction: column;
+                gap: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOADING OVERLAY ===== -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="load-text">Loading CodeVerse</div>
+    </div>
+
+    <!-- ===== STARS / PARTICLES ===== -->
+    <div class="stars-container" id="starsContainer"></div>
+    <div class="bg-particles" id="bgParticles"></div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="container">
+        <div class="header">
+            <div class="logo"><span>⌨️</span> Code<span>Verse</span></div>
+            <div class="subtitle">⚡ Quiz Results ⚡</div>
+        </div>
+
+        <div style="text-align:center; margin-bottom:8px;">
+            <span class="subject-badge" id="subjectBadge">📊 Results</span>
+        </div>
+
+        <!-- Top Nav -->
+        <div class="top-nav">
+            <a href="dashboard.html" class="back-to-dash">← Back to Dashboard</a>
+            <span class="user-badge-top" id="userBadgeTop">👤 <span id="currentUserDisplay">User</span></span>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="results-summary" id="resultsSummary">
+            <span class="result-icon" id="resultIcon">🏆</span>
+            <h2 class="result-title pass" id="resultTitle">PASSED!</h2>
+            <p class="result-sub" id="resultSub">Great job on the quiz!</p>
+
+            <div class="result-stats">
+                <div class="stat-item">
+                    <span class="stat-number green" id="statCorrect">0</span>
+                    <span class="stat-label">✅ Correct</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number red" id="statWrong">0</span>
+                    <span class="stat-label">❌ Wrong</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number gold" id="statMarks">0</span>
+                    <span class="stat-label">📊 Marks</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number cyan" id="statPercentage">0%</span>
+                    <span class="stat-label">🎯 Score</span>
+                </div>
+            </div>
+
+            <div class="result-divider"></div>
+
+            <div class="result-actions">
+                <button class="nav-btn retry-btn" id="retryBtn">🔄 Retry Quiz</button>
+                <button class="nav-btn done-btn" id="doneBtn">✅ Done</button>
+            </div>
+        </div>
+
+        <!-- Question Review -->
+        <div class="review-section">
+            <div class="review-title">📋 Question <span>Review</span></div>
+            <div id="reviewContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== LOADING OVERLAY =====
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        setTimeout(function() {
+            loadingOverlay.classList.add('hide');
+        }, 1200);
+
+        /**
+         * ===================================================================
+         *  CODEVERSE · RESULT PAGE
+         *  Displays quiz results from localStorage with detailed review.
+         *  Retry button redirects to the correct quiz page based on subject.
+         * ===================================================================
+         */
+
+        (function() {
+            'use strict';
+
+            // ================================================================
+            //  DOM REFS
+            // ================================================================
+            const userDisplay = document.getElementById('currentUserDisplay');
+            const subjectBadge = document.getElementById('subjectBadge');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultSub = document.getElementById('resultSub');
+            const statCorrect = document.getElementById('statCorrect');
+            const statWrong = document.getElementById('statWrong');
+            const statMarks = document.getElementById('statMarks');
+            const statPercentage = document.getElementById('statPercentage');
+            const reviewContainer = document.getElementById('reviewContainer');
+            const retryBtn = document.getElementById('retryBtn');
+            const doneBtn = document.getElementById('doneBtn');
+
+            // ================================================================
+            //  GET USER
+            // ================================================================
+            function getCurrentUser() {
+                const user = localStorage.getItem('codeverse_current_user');
+                return user || 'Guest';
+            }
+            userDisplay.textContent = getCurrentUser();
+
+            // ================================================================
+            //  LOAD RESULTS FROM localStorage
+            // ================================================================
+            let currentSubject = null;
+
+            function loadResults() {
+                const raw = localStorage.getItem('codeverse_quiz_result');
+                if (!raw) {
+                    showEmptyState();
+                    return;
+                }
+
+                try {
+                    const data = JSON.parse(raw);
+                    currentSubject = data.subject || 'java';
+                    displayResults(data);
+                } catch (e) {
+                    console.error('Error parsing results:', e);
+                    showEmptyState();
+                }
+            }
+
+            // ================================================================
+            //  DISPLAY RESULTS
+            // ================================================================
+            function displayResults(data) {
+                const { subject, correct, wrong, marks, percentage, answers, questions } = data;
+
+                // Subject badge
+                const subNames = {
+                    java: '☕ Java',
+                    python: '🐍 Python',
+                    dbms: '🗄️ DBMS'
+                };
+                const subDisplay = subNames[subject] || subject || 'Quiz';
+                subjectBadge.textContent = `${subDisplay} · Results`;
+
+                // Summary stats
+                const isPass = marks >= 15;
+                resultIcon.textContent = isPass ? '🏆' : '💪';
+                resultTitle.textContent = isPass ? '🎊 PASSED!' : 'Keep Practicing!';
+                resultTitle.className = 'result-title ' + (isPass ? 'pass' : 'fail');
+                resultSub.textContent = isPass ?
+                    `You scored ${marks} marks! Outstanding performance! 🌟` :
+                    `You scored ${marks} marks. Review your answers and try again! 💪`;
+
+                statCorrect.textContent = correct;
+                statWrong.textContent = wrong;
+                statMarks.textContent = marks;
+                statPercentage.textContent = percentage + '%';
+
+                // Build question review
+                const letters = ['A', 'B', 'C', 'D'];
+                let reviewHtml = '';
+
+                if (!questions || !answers) {
+                    reviewHtml = `
+                        <div class="empty-state">
+                            <span class="empty-icon">📭</span>
+                            <div class="empty-text">No question data available.</div>
+                        </div>
+                    `;
+                } else {
+                    questions.forEach((q, idx) => {
+                        const userAns = answers[idx];
+                        const isCorrect = userAns === q.correct;
+                        const isWrong = userAns !== null && userAns !== q.correct;
+                        const statusClass = isCorrect ? 'correct' : (isWrong ? 'wrong' : '');
+                        const statusIcon = isCorrect ? '✅' : (isWrong ? '❌' : '⏳');
+
+                        let userAnsText = 'Not answered';
+                        let userAnsClass = 'not-answered';
+                        if (userAns !== null) {
+                            userAnsText = letters[userAns] + '. ' + q.options[userAns];
+                            userAnsClass = isCorrect ? 'user-correct' : 'user-wrong';
+                        }
+
+                        const correctAnsText = letters[q.correct] + '. ' + q.options[q.correct];
+
+                        reviewHtml += `
+                            <div class="review-item ${statusClass}">
+                                <div class="ri-header">
+                                    <span class="ri-qnum">Q${idx + 1}</span>
+                                    <span class="ri-status">${statusIcon}</span>
+                                </div>
+                                <div class="ri-question">${q.question}</div>
+                                <div class="ri-answers">
+                                    <span class="ri-answer">
+                                        <span class="ri-label">Your Answer:</span>
+                                        <span class="ri-text ${userAnsClass}">${userAnsText}</span>
+                                    </span>
+                                    ${isWrong ? `
+                                        <span class="ri-answer">
+                                            <span class="ri-label">Correct Answer:</span>
+                                            <span class="ri-text correct-answer">${correctAnsText}</span>
+                                        </span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                reviewContainer.innerHTML = reviewHtml;
+            }
+
+            // ================================================================
+            //  EMPTY STATE
+            // ================================================================
+            function showEmptyState() {
+                subjectBadge.textContent = '📊 No Results';
+                resultIcon.textContent = '📭';
+                resultTitle.textContent = 'No Data Found';
+                resultTitle.className = 'result-title fail';
+                resultSub.textContent = 'Take a quiz to see your results here!';
+
+                statCorrect.textContent = '—';
+                statWrong.textContent = '—';
+                statMarks.textContent = '—';
+                statPercentage.textContent = '—%';
+
+                reviewContainer.innerHTML = `
+                    <div class="empty-state">
+                        <span class="empty-icon">📭</span>
+                        <div class="empty-text">No quiz results found. <br>Please complete a quiz first.</div>
+                    </div>
+                `;
+            }
+
+            // ================================================================
+            //  RETRY → redirect to the correct quiz page based on subject
+            // ================================================================
+            retryBtn.addEventListener('click', function() {
+                // Map subject to quiz page
+                const quizPages = {
+                    java: 'java_quiz.html',
+                    python: 'python_quiz.html',
+                    dbms: 'dbms_quiz.html'
+                };
+
+                const page = quizPages[currentSubject] || 'java_quiz.html';
+                window.location.href = page;
+            });
+
+            // ================================================================
+            //  DONE → go to dashboard
+            // ================================================================
+            doneBtn.addEventListener('click', function() {
+                window.location.href = 'dashboard.html';
+            });
+
+            // ================================================================
+            //  STARS & PARTICLES
+            // ================================================================
+            function createStars() {
+                const container = document.getElementById('starsContainer');
+                for (let i = 0; i < 120; i++) {
+                    const star = document.createElement('div');
+                    star.classList.add('star');
+                    const size = Math.random() * 3 + 1;
+                    star.style.width = size + 'px';
+                    star.style.height = size + 'px';
+                    star.style.left = Math.random() * 100 + '%';
+                    star.style.top = Math.random() * 100 + '%';
+                    star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                    star.style.setProperty('--delay', (Math.random() * 5) + 's');
+                    container.appendChild(star);
+                }
+            }
+            createStars();
+
+            const particleContainer = document.getElementById('bgParticles');
+            const pColors = ['#9d4edd', '#00f0ff', '#7a4aaa', '#3af0ff', '#c084fc'];
+            for (let i = 0; i < 45; i++) {
+                const p = document.createElement('div');
+                p.className = 'bg-particle';
+                const size = Math.random() * 5 + 2;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.background = pColors[Math.floor(Math.random() * pColors.length)];
+                p.style.animationDuration = (Math.random() * 16 + 10) + 's';
+                p.style.animationDelay = (Math.random() * 14) + 's';
+                p.style.boxShadow = '0 0 14px ' + p.style.background;
+                particleContainer.appendChild(p);
+            }
+
+            // ================================================================
+            //  INIT
+            // ================================================================
+            loadResults();
+            console.log('📊 Result page loaded. Subject:', currentSubject);
+
+        })();
+    </script>
+</body>
+</html>
