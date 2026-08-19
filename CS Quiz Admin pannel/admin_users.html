@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeVerse · Admin Users</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: #0a0015;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: #0a0015;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .loading-overlay.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loading-overlay .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(157, 78, 221, 0.2);
+            border-top: 4px solid #00f0ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+            margin-bottom: 24px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-overlay .load-text {
+            color: #00f0ff;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            animation: textPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 220px;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(20, 10, 40, 0.95), rgba(10, 5, 25, 0.98));
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(157, 78, 221, 0.1);
+            padding: 24px 0;
+            z-index: 50;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        .sidebar .brand {
+            text-align: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(157, 78, 221, 0.08);
+            margin-bottom: 16px;
+        }
+        .sidebar .brand .logo {
+            font-size: 22px;
+            font-weight: 900;
+            color: #00f0ff;
+        }
+        .sidebar .brand .logo span {
+            color: #9d4edd;
+        }
+        .sidebar .brand .sub {
+            font-size: 10px;
+            color: rgba(157, 78, 221, 0.4);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .sidebar .user-info {
+            padding: 12px 24px;
+            border-bottom: 1px solid rgba(157, 78, 221, 0.08);
+            margin-bottom: 8px;
+        }
+        .sidebar .user-info .username {
+            font-size: 14px;
+            font-weight: 700;
+            color: #00f0ff;
+        }
+        .sidebar .user-info .role-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+        .sidebar .user-info .role-badge.teacher {
+            background: rgba(52, 211, 153, 0.15);
+            color: #34d399;
+        }
+        .sidebar .user-info .role-badge.student {
+            background: rgba(0, 240, 255, 0.15);
+            color: #00f0ff;
+        }
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 24px;
+            color: rgba(255, 255, 255, 0.4);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        .sidebar .nav-item:hover {
+            color: #fff;
+            background: rgba(157, 78, 221, 0.05);
+        }
+        .sidebar .nav-item.active {
+            color: #00f0ff !important;
+            border-left-color: #00f0ff !important;
+            background: rgba(0, 240, 255, 0.04) !important;
+        }
+        .sidebar .nav-item .icon {
+            font-size: 18px;
+            width: 28px;
+            text-align: center;
+        }
+        .sidebar .logout-btn {
+            margin-top: 24px;
+            border-top: 1px solid rgba(157, 78, 221, 0.08);
+            padding-top: 16px;
+            color: #ff6b6b;
+        }
+        .sidebar .logout-btn:hover {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .main-content {
+            margin-left: 220px;
+            padding: 28px 32px 40px;
+            min-height: 100vh;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #00f0ff;
+            margin-bottom: 6px;
+        }
+        .page-sub {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .table-wrap {
+            background: linear-gradient(145deg, rgba(20, 10, 40, 0.88), rgba(30, 15, 50, 0.88));
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(157, 78, 221, 0.08);
+            border-radius: 14px;
+            padding: 20px 24px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+        .table-wrap .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .table-wrap .table-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .table-wrap th {
+            text-align: left;
+            padding: 10px 12px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(157, 78, 221, 0.06);
+        }
+        .table-wrap td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(157, 78, 221, 0.04);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .table-wrap tr:hover td {
+            background: rgba(157, 78, 221, 0.03);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.15);
+        }
+        .empty-state .empty-icon {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 60;
+            background: rgba(20, 10, 40, 0.9);
+            border: 1px solid rgba(157, 78, 221, 0.15);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #00f0ff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .hamburger:hover {
+            background: rgba(30, 15, 50, 0.9);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0015; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #9d4edd, #00f0ff);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: #00f0ff; }
+
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.8); }
+        }
+
+        @media (max-width: 500px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .hamburger {
+                display: flex !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="load-text">Loading Admin Panel</div>
+    </div>
+
+    <div class="stars-container" id="starsContainer"></div>
+
+    <button class="hamburger" id="hamburgerBtn">☰</button>
+
+    <div class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="logo">⌨️ Code<span>Verse</span></div>
+            <div class="sub">Admin Panel</div>
+        </div>
+        <div class="user-info">
+            <div class="username">👤 Admin</div>
+            <span class="role-badge teacher">👨‍🏫 Teacher</span>
+        </div>
+        <a href="admin_dashboard.html" class="nav-item">
+            <span class="icon">📊</span> Dashboard
+        </a>
+        <a href="admin_users.html" class="nav-item active">
+            <span class="icon">👥</span> Users
+        </a>
+        <a href="admin_questions.html" class="nav-item">
+            <span class="icon">📝</span> Questions
+        </a>
+        <a href="admin_analytics.html" class="nav-item">
+            <span class="icon">📈</span> Analytics
+        </a>
+        <a href="admin_login.html" class="nav-item logout-btn">
+            <span class="icon">🚪</span> Logout
+        </a>
+    </div>
+
+    <div class="main-content">
+        <h1 class="page-title">👥 Users</h1>
+        <p class="page-sub">Manage all registered users</p>
+
+        <div class="table-wrap">
+            <div class="table-header">
+                <h3>All Users</h3>
+                <span style="font-size:12px; color:rgba(255,255,255,0.2);">0 users</span>
+            </div>
+            <div class="empty-state">
+                <span class="empty-icon">📭</span>
+                No users registered yet.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hide');
+            }, 800);
+
+            const container = document.getElementById('starsContainer');
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.setProperty('--delay', (Math.random() * 5) + 's');
+                container.appendChild(star);
+            }
+
+            const sidebar = document.getElementById('sidebar');
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+
+            hamburgerBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 500) {
+                    if (!sidebar.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                        sidebar.classList.remove('open');
+                    }
+                }
+            });
+
+            document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 500) {
+                        sidebar.classList.remove('open');
+                    }
+                });
+            });
+
+            (function highlightSidebar() {
+                const currentPath = window.location.pathname.split('/').pop() || 'admin_dashboard.html';
+                document.querySelectorAll('.sidebar .nav-item[href]').forEach(item => {
+                    const href = item.getAttribute('href');
+                    if (href === currentPath) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+            })();
+
+            document.querySelector('.sidebar .logout-btn').addEventListener('click', function(e) {
+                if (!confirm('Are you sure you want to logout?')) {
+                    e.preventDefault();
+                }
+            });
+
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeVerse · Admin Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: #0a0015;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            background: #9d4edd;
+            border-radius: 50%;
+            filter: blur(200px);
+            top: -300px;
+            left: -300px;
+            opacity: 0.15;
+            z-index: 0;
+            animation: orbPulse 7s ease-in-out infinite alternate;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: #00f0ff;
+            border-radius: 50%;
+            filter: blur(200px);
+            bottom: -250px;
+            right: -250px;
+            opacity: 0.12;
+            z-index: 0;
+            animation: orbPulse 9s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes orbPulse {
+            0% { transform: scale(1); opacity: 0.12; }
+            100% { transform: scale(1.3); opacity: 0.25; }
+        }
+
+        .login-card {
+            background: linear-gradient(145deg, rgba(20, 10, 40, 0.92), rgba(30, 15, 50, 0.92));
+            backdrop-filter: blur(20px);
+            border: 2px solid #9d4edd;
+            border-radius: 16px;
+            padding: 44px 38px 50px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 0 40px rgba(157, 78, 221, 0.5), 0 0 80px rgba(0, 240, 255, 0.25);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            animation: fadeUp 0.8s ease-out;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-card .logo {
+            font-size: 28px;
+            font-weight: 900;
+            color: #00f0ff;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            margin-bottom: 4px;
+        }
+        .login-card .logo span {
+            color: #9d4edd;
+        }
+        .login-card .sub {
+            color: rgba(157, 78, 221, 0.5);
+            font-size: 12px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 28px;
+        }
+
+        .login-card .login-error {
+            color: #ff6b6b;
+            font-size: 13px;
+            font-weight: 600;
+            min-height: 22px;
+            margin-bottom: 12px;
+        }
+        .login-card .login-success {
+            color: #34d399;
+            font-size: 13px;
+            font-weight: 600;
+            min-height: 22px;
+            margin-bottom: 12px;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(157, 78, 221, 0.3);
+            border-radius: 8px;
+            background: rgba(157, 78, 221, 0.05);
+            color: #00f0ff;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            margin-bottom: 14px;
+        }
+        .login-card input:focus {
+            outline: none;
+            border-color: #00f0ff;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .login-card input::placeholder {
+            color: rgba(157, 78, 221, 0.3);
+        }
+        .login-btn {
+            position: relative;
+            width: 100%;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #9d4edd, #00f0ff);
+            color: #0a0015;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 30px rgba(157, 78, 221, 0.3);
+            transition: all 0.3s ease;
+        }
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 50px rgba(157, 78, 221, 0.5);
+        }
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .register-link {
+            display: inline-block;
+            margin-top: 18px;
+            color: rgba(157, 78, 221, 0.5);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        .register-link:hover {
+            color: #00f0ff;
+        }
+        .register-link strong {
+            color: #9d4edd;
+        }
+        .register-link:hover strong {
+            color: #00f0ff;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: #0a0015;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .loading-overlay.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loading-overlay .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(157, 78, 221, 0.2);
+            border-top: 4px solid #00f0ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+            margin-bottom: 24px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-overlay .load-text {
+            color: #00f0ff;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            animation: textPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.8); }
+        }
+
+        .ripple-effect {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleAnim 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(15);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="load-text">Loading Admin Panel</div>
+    </div>
+
+    <div class="stars-container" id="starsContainer"></div>
+
+    <div class="login-card">
+        <div class="logo">⌨️ Code<span>Verse</span></div>
+        <div class="sub">⚡ Admin Access ⚡</div>
+        <div id="loginMessage"></div>
+        <input type="text" id="username" placeholder="Username" />
+        <input type="password" id="password" placeholder="Password" />
+        <button class="login-btn" id="loginBtn">🔐 Log In</button>
+
+        <div style="margin-top:18px; padding-top:18px; border-top:1px solid rgba(157,78,221,0.08);">
+            <a href="admin_register.html" class="register-link">
+                Don't have an account? <strong>Register →</strong>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hide');
+            }, 800);
+
+            const container = document.getElementById('starsContainer');
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.setProperty('--delay', (Math.random() * 5) + 's');
+                container.appendChild(star);
+            }
+
+            const loginBtn = document.getElementById('loginBtn');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const msgEl = document.getElementById('loginMessage');
+
+            function doLogin() {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                msgEl.className = '';
+                msgEl.textContent = '';
+
+                if (!username || !password) {
+                    msgEl.className = 'login-error';
+                    msgEl.textContent = '⚠️ Please enter both username and password';
+                    return;
+                }
+
+                msgEl.className = 'login-success';
+                msgEl.textContent = '✅ Logging in...';
+
+                loginBtn.disabled = true;
+                loginBtn.style.opacity = '0.6';
+                loginBtn.style.cursor = 'not-allowed';
+
+                setTimeout(function() {
+                    window.location.href = 'admin_dashboard.html';
+                }, 600);
+            }
+
+            loginBtn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple-effect';
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                ripple.style.left = (x - 10) + 'px';
+                ripple.style.top = (y - 10) + 'px';
+                this.appendChild(ripple);
+                setTimeout(function() { ripple.remove(); }, 700);
+                doLogin();
+            });
+
+            passwordInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') loginBtn.click();
+            });
+            usernameInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') loginBtn.click();
+            });
+
+        })();
+    </script>
+</body>
+</html>
